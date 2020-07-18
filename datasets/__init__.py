@@ -22,4 +22,7 @@ def build_dataset(image_set, args):
         # to avoid making panopticapi required for coco
         from .coco_panoptic import build as build_coco_panoptic
         return build_coco_panoptic(image_set, args)
+    if args.dataset_file == 'AI2Thor_Det_21cls_Data':
+        from .coco import build_AI2Thor_dataset
+        return build_AI2Thor_dataset(image_set, args)
     raise ValueError(f'dataset {args.dataset_file} not supported')
