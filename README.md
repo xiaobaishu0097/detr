@@ -261,3 +261,10 @@ DETR is released under the Apache 2.0 license. Please see the [LICENSE](LICENSE)
 
 # Contributing
 We actively welcome your pull requests! Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md) for more info.
+
+
+# Private Commands Record
+Using 1,2,3 three gpus to fine-tune the pretrained model on 22 classes detection data extracted from AI2Thor environment.
+```python
+CUDA_VISIBLE_DEVICES=1,2,3 python -m torch.distributed.launch --nproc_per_node=3 --use_env main.py --coco_path ~/Data/AI2Thor_Det_21cls_Data/ --dataset_file AI2Thor_Det_21cls_Data --output_dir output --num_workers 4 --resume='model_zoo/detr-r50_no-class-head.pth' --batch_size 5
+```
