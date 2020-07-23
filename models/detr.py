@@ -305,7 +305,7 @@ def build(args):
     num_classes = 20 if args.dataset_file != 'coco' else 91
     if args.dataset_file == "coco_panoptic":
         num_classes = 250
-    if args.dataset_file == 'AI2Thor_Det_21cls_Data':
+    if args.dataset_file == 'AI2Thor_Det_22cls_Data':
         num_classes = 22
     device = torch.device(args.device)
 
