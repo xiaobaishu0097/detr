@@ -142,6 +142,12 @@ def make_coco_transforms(image_set):
             normalize,
         ])
 
+    if image_set == 'all':
+        return T.Compose([
+            T.RandomResize([800], max_size=1333),
+            normalize,
+        ])
+
     raise ValueError(f'unknown {image_set}')
 
 
@@ -161,11 +167,12 @@ def build(image_set, args):
 
 def build_AI2Thor_dataset(image_set, args):
     root = Path(args.coco_path)
-    assert root.exists(), f'provided COCO path {root} does not exist'
+    assert root.exists(), f'provided AI2Thor path {root} does not exist'
     mode = 'instances'
     PATHS = {
         "train": (root / "train", root / "annotations" / f'{mode}_train.json'),
         "val": (root / "val", root / "annotations" / f'{mode}_val.json'),
+        "all": (root / "all", root / "annotations" / f'{mode}_all.json'),
     }
 
     img_folder, ann_file = PATHS[image_set]
