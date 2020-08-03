@@ -6,7 +6,7 @@ import random
 import time
 import h5py
 import os
-import tqdm
+from tqdm import tqdm
 from pathlib import Path
 
 import numpy as np
@@ -123,7 +123,7 @@ def combine_files(args, data_dir):
         with h5py.File(det_features_file_path, 'w') as wf:
             for image_key in tqdm(scenes_list[scene]):
                 _, loc = image_key.split('|', 1)
-                loc_writer = wf.create_group('loc')
+                loc_writer = wf.create_group(loc)
                 image_id = int(image_list[image_key].split('.', 1)[0])
                 det_feature_file_path = os.path.join(args.output_dir, '{:09d}.hdf5'.format(image_id))
                 with h5py.File(det_feature_file_path, 'r') as rf:
@@ -141,7 +141,7 @@ def main(args):
     utils.init_distributed_mode(args)
     if args.output_dir is None:
         args.output_dir = os.path.expanduser('~/Data/AI2Thor_detection_features/')
-    if args.output_dir is not os.path.exists():
+    if not os.path.exists(args.output_dir):
         os.mkdir(args.output_dir)
     device = torch.device(args.device)
 
@@ -197,17 +197,17 @@ def main(args):
             lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
             args.start_epoch = checkpoint['epoch'] + 1
 
-    print("Start extracting features")
-    start_time = time.time()
-    extract_feature(model, criterion, postprocessors,
-                                          data_loader_all, base_ds, device, args.output_dir)
-    total_time = time.time() - start_time
-    total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    print('Extracting features time {}'.format(total_time_str))
+    # print("Start extracting features")
+    # start_time = time.time()
+    # extract_feature(model, criterion, postprocessors,
+    #                                       data_loader_all, base_ds, device, args.output_dir)
+    # total_time = time.time() - start_time
+    # total_time_str = str(datetime.timedelta(seconds=int(total_time)))
+    # print('Extracting features time {}'.format(total_time_str))
 
     print('Start combining files')
     start_time = time.time()
-    data_dir = os.path.expanduser('~/Data/AI2thor_offline_data_2.0.2/')
+    data_dir = os.path.expanduser('~/Data/AI2Thor_offline_data_2.0.2/')
     combine_files(args, data_dir)
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
