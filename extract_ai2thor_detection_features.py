@@ -128,12 +128,10 @@ def combine_files(args, data_dir):
                 det_feature_file_path = os.path.join(args.output_dir, '{:09d}.hdf5'.format(image_id))
                 with h5py.File(det_feature_file_path, 'r') as rf:
                     loc_writer.create_dataset('features', data=rf['features'][:])
-                    predicted_writer = loc_writer.create_group('predicted')
-                    predicted_writer.create_dataset('scores', data=rf['predicted']['scores'][:])
-                    predicted_writer.create_dataset('labels', data=rf['predicted']['labels'][:])
-                    estimated_writer = loc_writer.create_group('estimated')
-                    estimated_writer.create_dataset('scores', data=rf['estimated']['scores'][:])
-                    estimated_writer.create_dataset('labels', data=rf['estimated']['labels'][:])
+                    loc_writer.create_dataset('predicted_scores', data=rf['predicted']['scores'][:])
+                    loc_writer.create_dataset('predicted_labels', data=rf['predicted']['labels'][:])
+                    loc_writer.create_dataset('estimated_scores', data=rf['estimated']['scores'][:])
+                    loc_writer.create_dataset('estimated_labels', data=rf['estimated']['labels'][:])
                     loc_writer.create_dataset('bboxes', data=rf['bboxes'])
 
 
@@ -197,13 +195,13 @@ def main(args):
             lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
             args.start_epoch = checkpoint['epoch'] + 1
 
-    print("Start extracting features")
-    start_time = time.time()
-    extract_feature(model, criterion, postprocessors,
-                                          data_loader_all, base_ds, device, args.output_dir)
-    total_time = time.time() - start_time
-    total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    print('Extracting features time {}'.format(total_time_str))
+    # print("Start extracting features")
+    # start_time = time.time()
+    # extract_feature(model, criterion, postprocessors,
+    #                                       data_loader_all, base_ds, device, args.output_dir)
+    # total_time = time.time() - start_time
+    # total_time_str = str(datetime.timedelta(seconds=int(total_time)))
+    # print('Extracting features time {}'.format(total_time_str))
 
     print('Start combining files')
     start_time = time.time()
