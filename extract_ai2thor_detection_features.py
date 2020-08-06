@@ -123,16 +123,26 @@ def combine_files(args, data_dir):
         with h5py.File(det_features_file_path, 'w') as wf:
             for image_key in tqdm(scenes_list[scene]):
                 _, loc = image_key.split('|', 1)
-                loc_writer = wf.create_group(loc)
+                # loc_writer = wf.create_group(loc)
                 image_id = int(image_list[image_key].split('.', 1)[0])
                 det_feature_file_path = os.path.join(args.output_dir, '{:09d}.hdf5'.format(image_id))
+                loc_data = np.zeros((100, 264))
                 with h5py.File(det_feature_file_path, 'r') as rf:
-                    loc_writer.create_dataset('features', data=rf['features'][:])
-                    loc_writer.create_dataset('predicted_scores', data=rf['predicted']['scores'][:])
-                    loc_writer.create_dataset('predicted_labels', data=rf['predicted']['labels'][:])
-                    loc_writer.create_dataset('estimated_scores', data=rf['estimated']['scores'][:])
-                    loc_writer.create_dataset('estimated_labels', data=rf['estimated']['labels'][:])
-                    loc_writer.create_dataset('bboxes', data=rf['bboxes'])
+                    loc_data[:, :256] = rf['features'][:]
+                    loc_data[:, 256] = rf['predicted']['scores'][:]
+                    loc_data[:, 257] = rf['predicted']['labels'][:]
+                    loc_data[:, 258] = rf['estimated']['scores'][:]
+                    loc_data[:, 259] = rf['estimated']['labels'][:]
+                    loc_data[:, 260:] = rf['bboxes'][:]
+                    # loc_writer.create_dataset('features', data=rf['features'][:])
+                    # predicted_writer = loc_writer.create_group('predicted')
+                    # predicted_writer.create_dataset('scores', data=rf['predicted']['scores'][:])
+                    # predicted_writer.create_dataset('labels', data=rf['predicted']['labels'][:])
+                    # estimated_writer = loc_writer.create_group('estimated')
+                    # estimated_writer.create_dataset('scores', data=rf['estimated']['scores'][:])
+                    # estimated_writer.create_dataset('labels', data=rf['estimated']['labels'][:])
+                    # loc_writer.create_dataset('bboxes', data=rf['bboxes'])
+                wf.create_dataset(loc, data=loc_data)
 
 
 def main(args):
